@@ -36,6 +36,18 @@ streamlit run app.py
 Deploy free on **Streamlit Community Cloud** → connect this GitHub repo → set
 `OPENAI_API_KEY` in the app's Secrets. Public URL goes in the portfolio.
 
+## CI/CD — how deployment works
+This repo uses **platform-native Git integration (no pipeline file needed)**:
+
+```
+git push → GitHub → Streamlit Community Cloud detects the push → app redeploys automatically
+```
+
+One-time setup: on share.streamlit.io, create a new app pointing at this repo /
+branch / `app.py`, and add API keys under **Settings → Secrets** (never commit keys).
+After that, every push to `main` redeploys the live app on its own — no GitHub Actions,
+no deploy script.
+
 ## Record it
 60–120s: the problem → live demo → one thing I learned. Link goes in the portfolio.
 
