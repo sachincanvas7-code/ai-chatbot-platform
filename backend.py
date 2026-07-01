@@ -1,15 +1,14 @@
 """
 RoastMyPM — backend (the "brain").
 
-Step 2: real LLM call via Groq (llama-3.3-70b-versatile).
-Function shape is unchanged: takes résumé text, returns a roast string.
+Step 3: memory. get_response() now receives the full conversation history
+instead of a single resume string. System prompt is prepended every call.
 """
 
 import os
 from groq import Groq
 from dotenv import load_dotenv
 
-# Loads .env locally; no-op on Streamlit Cloud (secrets are injected as env vars)
 load_dotenv()
 
 SYSTEM_PROMPT = """You are a brutally honest PM hiring manager with 15 years of experience at top product companies like Razorpay, Swiggy, and CRED.
@@ -20,8 +19,9 @@ Rules:
 - Call out vague language ("managed", "worked on", "collaborated", "helped") — demand specifics.
 - Flag missing metrics ruthlessly. "Improved onboarding" is meaningless. "Reduced onboarding drop-off by 34%" is a bullet.
 - If the bullet is actually strong, say so — but always suggest how to push it further.
-- Be direct, a little sarcastic, but ultimately constructive. You want this PM to get the job.
+- Be direct, a little sarcastic, but constructive. You want this PM to get the job.
 - Always end with a rewritten version that would impress a hiring manager.
+- Remember the full conversation — if the user says "roast it harder" or "now tailor it for fintech", you know exactly what they mean.
 
 Format your response exactly like this:
 🔥 THE ROAST
@@ -34,8 +34,8 @@ Format your response exactly like this:
 [One sentence on what makes the rewrite stronger]"""
 
 
-def get_response(resume_text: str) -> str:
-    if not resume_text.strip():
+def get_response(messages: list) -> str:
+    if not messages:
         return "Paste something first — I can't roast thin air."
 
     api_key = os.environ.get("GROQ_API_KEY")
@@ -48,12 +48,12 @@ def get_response(resume_text: str) -> str:
 
     client = Groq(api_key=api_key)
 
+    # Prepend system prompt to the full conversation history
+    groq_messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
+
     chat_completion = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": resume_text},
-        ],
+        messages=groq_messages,
         temperature=0.7,
         max_tokens=1024,
     )

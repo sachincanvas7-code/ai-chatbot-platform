@@ -1,30 +1,43 @@
 """
-RoastMyPM — Step 1: the UI (static reply, no LLM yet).
+RoastMyPM — Step 3: memory (chat UI + conversation history).
 
-This is the FRONTEND (the "View"). It collects a résumé, hands it to the
-backend's get_response(), and shows whatever comes back. Right now the backend
-returns a fixed placeholder — proving the wiring works before we add the LLM.
+What changed from Step 2:
+- Text area + button replaced with a proper chat interface
+- Conversation history stored in st.session_state.messages
+- Full history sent to backend on every message (that's how memory works)
 """
 
 import streamlit as st
 from backend import get_response
 
-# Page metadata (browser tab title + icon)
 st.set_page_config(page_title="RoastMyPM", page_icon="🔥")
 
-# Header
 st.title("🔥 RoastMyPM")
 st.caption("The brutally honest résumé coach for product managers")
 
-# 1. A box for the user to paste their résumé (or one bullet)
-resume_text = st.text_area(
-    "Paste a résumé bullet — or your whole résumé:",
-    height=160,
-    placeholder="e.g. Managed stakeholders and worked on the product roadmap...",
-)
+# Initialize conversation history on first load
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# 2. When they click the button, send the text to the backend and show the reply
-if st.button("Roast it 🔥"):
-    verdict = get_response(resume_text)
-    st.markdown("**The verdict:**")
-    st.write(verdict)
+# Display the full conversation so far
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+# Chat input box (appears at the bottom)
+user_input = st.chat_input("Paste a résumé bullet or ask a follow-up...")
+
+if user_input:
+    # 1. Add user message to history and show it
+    st.session_state.messages.append({"role": "user", "content": user_input})
+    with st.chat_message("user"):
+        st.write(user_input)
+
+    # 2. Send full history to backend, get roast
+    with st.chat_message("assistant"):
+        with st.spinner("Roasting..."):
+            reply = get_response(st.session_state.messages)
+        st.write(reply)
+
+    # 3. Add assistant reply to history
+    st.session_state.messages.append({"role": "assistant", "content": reply})
