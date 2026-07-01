@@ -12,7 +12,7 @@ against a real PM rubric, and **rewritten bullets**, grounded in **what real PM 
 actually want** — with a bring-your-own-key option, transparent reasoning, and version
 tracking. Built to be shared in the PM community (and to double as proof I can ship AI products).
 
-**Principles:** free to use (Gemini default + BYOK) · copyright-clean data only · each phase
+**Principles:** free to use (Groq/Llama default + BYOK) · copyright-clean data only · each phase
 ships on its own · simple first, deepen later.
 
 ---
@@ -21,7 +21,7 @@ ships on its own · simple first, deepen later.
 
 | Phase | Capability | Tools / APIs | DB / Data | Enhancement(s) introduced | New concept |
 |------|-----------|--------------|-----------|---------------------------|-------------|
-| **v1** Core Roast | honest critique + rewrites; remembers the chat | LLM only | tiny SQLite: strong/weak PM bullet examples + rubric | Free default key + **BYOK** (model-agnostic) | UI, LLM, memory, system prompt, tool+DB |
+| **v1** Core Roast | honest critique + rewrites; remembers the chat | LLM only | tiny SQLite: strong/weak PM bullet examples + rubric | **Groq/Llama default** (free, no card) + **BYOK** (model-agnostic) | UI, LLM, memory, system prompt, tool+DB |
 | **v2** ATS Score | objective score + missing keywords | `compute_ats_score()` (internal) + **LanguageTool** (grammar/clarity) | keyword bank | **Token + cost meter**, **streaming + "show the LLM thinking"** | real tool, streaming |
 | **v3** Tailor-to-Role | tailor roast to a specific JD | `fetch_job_description(url)` + **Wikipedia** (company background) | — | **Transparency panel**, **rate-limiting** | external-API tool |
 | **v4** Real-Roles Intelligence | "what PM roles actually want" + salary reality | **Arbeitnow / Adzuna** jobs + salary, **O*NET** skills | **DB of real PM JDs** (from job platforms) | **Prompt caching** (cost control) | data ingestion / bigger DB |
@@ -34,7 +34,7 @@ ships on its own · simple first, deepen later.
 | Enhancement | Phase | What it does |
 |---|---|---|
 | Free default (Gemini) + **BYOK** | v1 | Zero-cost public use; users plug their own key |
-| **Model-agnostic backend** (Gemini/Groq/OpenAI/Claude) | v1 | Auto-detect provider from key prefix |
+| **Model-agnostic backend** (Groq/OpenAI/Claude) | v1 | Auto-detect provider from key prefix |
 | **Token + cost meter** | v2 | Tokens + ₹ per message — unit-economics signal |
 | **Streaming + "show the LLM thinking"** | v2 | Word-by-word output + live reasoning/steps log |
 | **Transparency panel** | v3/v4 | "scored against these criteria / using these JDs" — auditability brand |
@@ -65,7 +65,7 @@ Kept explicitly as part of the vision. All free + copyright-clean.
 ## 🟢 v1 scope (the first chatbot — simple, a true slice)
 Covers all 6 Week-4 concepts; everything above is later.
 - **UI** — paste résumé/bullet + chat (Streamlit)
-- **LLM** — Gemini free default + BYOK
+- **LLM** — Groq/Llama free default (no card needed) + BYOK
 - **Memory** — "rewrite that harder", "roast it again"
 - **System prompt** — brutal-but-fair PM hiring-manager persona + rubric
 - **Tool + DB** — `get_strong_examples(dimension)` → tiny SQLite of strong/weak PM bullets
