@@ -1,20 +1,30 @@
 """
-Modular AI Chatbot — Streamlit app.
+RoastMyPM — Step 1: the UI (static reply, no LLM yet).
 
-I'm building this step by step (see README). Start with Step 1 and commit
-each step. The TODOs below are my build checklist, not finished code.
+This is the FRONTEND (the "View"). It collects a résumé, hands it to the
+backend's get_response(), and shows whatever comes back. Right now the backend
+returns a fixed placeholder — proving the wiring works before we add the LLM.
 """
 
 import streamlit as st
+from backend import get_response
 
-st.set_page_config(page_title="AI Chatbot", page_icon="🤖")
-st.title("Modular AI Chatbot")
+# Page metadata (browser tab title + icon)
+st.set_page_config(page_title="RoastMyPM", page_icon="🔥")
 
-# TODO Step 1: render a chat input + message history in the UI
-# TODO Step 2: on submit, call the OpenAI API and show the reply
-# TODO Step 3: keep st.session_state["history"] and send it with each call (memory)
-# TODO Step 4: define tools (functions) and handle tool calls
-# TODO Step 5: add a system prompt to give the bot a personality
-# TODO Step 6: connect a database and answer questions over it
+# Header
+st.title("🔥 RoastMyPM")
+st.caption("The brutally honest résumé coach for product managers")
 
-st.info("Starter scaffold — implement the steps in the README.")
+# 1. A box for the user to paste their résumé (or one bullet)
+resume_text = st.text_area(
+    "Paste a résumé bullet — or your whole résumé:",
+    height=160,
+    placeholder="e.g. Managed stakeholders and worked on the product roadmap...",
+)
+
+# 2. When they click the button, send the text to the backend and show the reply
+if st.button("Roast it 🔥"):
+    verdict = get_response(resume_text)
+    st.markdown("**The verdict:**")
+    st.write(verdict)
